@@ -1,4 +1,15 @@
-/* Estilos generales */
+/* Estilos generales con paleta más juvenil */
+:root {
+    --color-primary: #8e44ad;       /* Morado vibrante */
+    --color-secondary: #3498db;     /* Azul brillante */
+    --color-accent: #1abc9c;        /* Verde turquesa */
+    --color-background: #f5f6fa;    /* Gris muy claro */
+    --color-card: #ffffff;          /* Blanco */
+    --color-text: #2c3e50;          /* Azul oscuro */
+    --color-text-light: #7f8c8d;    /* Gris medio */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,19 +19,23 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background-attachment: fixed;
 }
 
 a {
     text-decoration: none;
+    transition: all 0.3s ease;
 }
 
 /* Encabezado y navegación */
 header {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: white;
     padding: 1rem 0;
+    box-shadow: var(--shadow);
 }
 
 nav {
@@ -33,7 +48,9 @@ nav {
 }
 
 nav h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 nav ul {
@@ -46,13 +63,16 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #fff;
+    color: white;
     font-weight: 500;
-    transition: color 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s;
 }
 
 nav ul li a:hover {
-    color: #1db954;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
 }
 
 /* Contenido principal */
@@ -65,101 +85,119 @@ main {
 /* Botones */
 .btn {
     display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-weight: 500;
+    padding: 0.7rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .btn.primary {
-    background-color: #1db954;
+    background-color: var(--color-primary);
     color: white;
 }
 
 .btn.secondary {
-    background-color: #333;
+    background-color: var(--color-secondary);
     color: white;
 }
 
 .btn.play {
-    background-color: #1db954;
+    background-color: var(--color-primary);
     color: white;
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 1rem;
     font-size: 0.9rem;
+    border-radius: 20px;
 }
 
 .btn.download {
-    background-color: #333;
+    background-color: var(--color-secondary);
     color: white;
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 1rem;
     font-size: 0.9rem;
+    border-radius: 20px;
 }
 
 .btn:hover {
     opacity: 0.9;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* Página de inicio */
 .welcome {
     text-align: center;
-    padding: 2rem 0;
+    padding: 3rem 0;
 }
 
 .welcome h2 {
-    margin-bottom: 1rem;
-    color: #333;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
 .welcome p {
     max-width: 800px;
     margin: 0 auto 2rem;
-    color: #666;
+    color: var(--color-text);
+    font-size: 1.1rem;
 }
 
 .actions {
-    margin: 2rem 0;
+    margin: 2.5rem 0;
 }
 
 .actions .btn {
-    margin: 0 0.5rem;
-    padding: 0.8rem 1.5rem;
+    margin: 0 0.8rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
 }
 
 .features {
     display: flex;
     justify-content: space-between;
-    margin-top: 3rem;
+    margin-top: 4rem;
+    gap: 1.5rem;
 }
 
 .feature {
     flex: 1;
-    padding: 1.5rem;
-    margin: 0 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin: 0 0.5rem;
+    background-color: var(--color-card);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s;
+}
+
+.feature:hover {
+    transform: translateY(-10px);
 }
 
 .feature h3 {
-    color: #1db954;
+    color: var(--color-primary);
     margin-bottom: 1rem;
+    font-size: 1.5rem;
 }
 
 /* Página de subida */
 .upload-container {
     max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: var(--color-card);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
 }
 
 .upload-container h2 {
     text-align: center;
     margin-bottom: 2rem;
+    color: var(--color-primary);
+    font-size: 2rem;
 }
 
 .upload-form {
@@ -168,56 +206,87 @@ main {
 }
 
 .file-input {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .file-input label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text);
 }
 
 .file-input input[type="file"] {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 1rem;
+    border: 2px dashed var(--color-secondary);
+    border-radius: 10px;
+    background-color: rgba(52, 152, 219, 0.05);
+    transition: all 0.3s;
+}
+
+.file-input input[type="file"]:hover {
+    border-color: var(--color-primary);
+    background-color: rgba(142, 68, 173, 0.05);
 }
 
 .file-info {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    color: var(--color-text-light);
 }
 
 /* Página de playlist */
 .playlist-container {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
+    background-color: var(--color-card);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .playlist-container h2 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    color: var(--color-primary);
+    font-size: 2rem;
 }
 
 .player {
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2.5rem;
     text-align: center;
+    color: white;
+    box-shadow: var(--shadow);
 }
 
 .player h3 {
-    margin-bottom: 1rem;
-    color: #333;
+    margin-bottom: 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .player audio {
     width: 100%;
+    border-radius: 30px;
+    height: 40px;
+}
+
+/* Personalizar controles de audio */
+.player audio::-webkit-media-controls-panel {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.player audio::-webkit-media-controls-play-button,
+.player audio::-webkit-media-controls-volume-slider-container,
+.player audio::-webkit-media-controls-volume-slider,
+.player audio::-webkit-media-controls-timeline {
+    filter: invert(1);
 }
 
 .song-list {
@@ -228,8 +297,15 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1.2rem;
     border-bottom: 1px solid #eee;
+    transition: all 0.3s;
+    border-radius: 10px;
+}
+
+.song-item:hover {
+    background-color: rgba(142, 68, 173, 0.05);
+    transform: translateX(5px);
 }
 
 .song-item:last-child {
@@ -237,11 +313,17 @@ main {
 }
 
 .song-item.active {
-    background-color: #f0f9f2;
+    background-color: rgba(142, 68, 173, 0.1);
+    border-left: 4px solid var(--color-primary);
 }
 
 .song-name {
     flex: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
 }
 
 .song-actions {
@@ -249,24 +331,26 @@ main {
 }
 
 .song-actions .btn {
-    margin-left: 0.5rem;
+    margin-left: 0.8rem;
 }
 
 .empty-list {
     text-align: center;
-    padding: 3rem 0;
+    padding: 4rem 0;
 }
 
 .empty-list p {
-    margin-bottom: 1.5rem;
-    color: #666;
+    margin-bottom: 2rem;
+    color: var(--color-text-light);
+    font-size: 1.2rem;
 }
 
 /* Pie de página */
 footer {
     text-align: center;
     padding: 2rem 0;
-    color: #666;
+    color: var(--color-text-light);
+    font-size: 0.9rem;
 }
 
 /* Estilos responsivos */
@@ -281,8 +365,8 @@ footer {
     }
     
     nav ul li {
-        margin-left: 1rem;
-        margin-right: 1rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
     }
     
     .features {
@@ -300,5 +384,14 @@ footer {
     
     .song-actions {
         margin-top: 1rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .song-actions .btn {
+        margin-left: 0;
+        flex: 1;
+        margin-right: 0.5rem;
+        text-align: center;
     }
 }

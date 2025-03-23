@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="playlist-container">
-    <h2>Mis Canciones</h2>
+    <h2>Mi Biblioteca Musical</h2>
     
     {% if files %}
         {% if current_file %}
@@ -22,15 +22,15 @@
             <li class="song-item {% if current_file == file %}active{% endif %}">
                 <span class="song-name">{{ file }}</span>
                 <div class="song-actions">
-                    <a href="{{ url_for('play_file', filename=file) }}" class="btn play">Reproducir</a>
-                    <a href="{{ url_for('download_file', filename=file) }}" class="btn download">Descargar</a>
+                    <a href="{{ url_for('play_file', filename=file) }}" class="btn play">▶️ Reproducir</a>
+                    <a href="{{ url_for('download_file', filename=file) }}" class="btn download">⬇️ Descargar</a>
                 </div>
             </li>
             {% endfor %}
         </ul>
     {% else %}
         <div class="empty-list">
-            <p>No hay canciones disponibles.</p>
+            <p>No hay canciones disponibles. ¡Comienza subiendo tu música!</p>
             <a href="{{ url_for('upload') }}" class="btn primary">Subir canciones</a>
         </div>
     {% endif %}

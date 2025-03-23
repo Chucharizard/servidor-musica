@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # Limita tamaño a 32MB
+app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # Limita tamaño a 200MB
 ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a'}
 
 # Asegúrate de que la carpeta de uploads exista
