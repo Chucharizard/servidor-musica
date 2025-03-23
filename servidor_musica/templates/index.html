@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="welcome">
+    <h2>Bienvenido a tu Servidor de Música Personal</h2>
+    <p>Este servidor te permite subir, almacenar y reproducir tus canciones favoritas desde cualquier dispositivo en tu red.</p>
+    
+    <div class="actions">
+        <a href="{{ url_for('upload') }}" class="btn primary">Subir nueva canción</a>
+        <a href="{{ url_for('playlist') }}" class="btn secondary">Ver mis canciones</a>
+    </div>
+    
+    <div class="features">
+        <div class="feature">
+            <h3>Sube tus canciones</h3>
+            <p>Importa archivos MP3, WAV, OGG o M4A desde tu dispositivo.</p>
+        </div>
+        <div class="feature">
+            <h3>Escucha donde quieras</h3>
+            <p>Accede a tu música desde cualquier dispositivo conectado a tu red local.</p>
+        </div>
+        <div class="feature">
+            <h3>Descarga cuando necesites</h3>
+            <p>Descarga tus canciones a cualquier dispositivo para escucharlas sin conexión.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

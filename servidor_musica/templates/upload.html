@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Subir Música - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <h2>Subir Nueva Canción</h2>
+    
+    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" class="upload-form">
+        <div class="file-input">
+            <label for="file">Seleccionar archivo de música</label>
+            <input type="file" id="file" name="file" accept=".mp3,.wav,.ogg,.m4a">
+            <p class="file-info">Formatos permitidos: MP3, WAV, OGG, M4A</p>
+            <p class="file-info">Tamaño máximo: 32MB</p>
+        </div>
+        
+        <button type="submit" class="btn primary">Subir Archivo</button>
+    </form>
+</div>
+{% endblock %}
