@@ -7,7 +7,12 @@
     --color-card: #ffffff;          /* Blanco */
     --color-text: #2c3e50;          /* Azul oscuro */
     --color-text-light: #7f8c8d;    /* Gris medio */
+    --color-error: #e74c3c;         /* Rojo */
+    --color-success: #2ecc71;       /* Verde */
+    --color-warning: #f39c12;       /* Naranja */
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --radius: 15px;                 /* Radio de bordes */
+    --transition: all 0.3s ease;    /* Transición estándar */
 }
 
 * {
@@ -27,7 +32,7 @@ body {
 
 a {
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: var(--transition);
 }
 
 /* Encabezado y navegación */
@@ -36,6 +41,9 @@ header {
     color: white;
     padding: 1rem 0;
     box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 nav {
@@ -53,26 +61,64 @@ nav h1 {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-nav ul {
+.nav-links {
     display: flex;
     list-style: none;
 }
 
-nav ul li {
+.nav-links li {
     margin-left: 1.5rem;
 }
 
-nav ul li a {
+.nav-links li a {
     color: white;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    transition: all 0.3s;
+    transition: var(--transition);
 }
 
-nav ul li a:hover {
+.nav-links li a:hover {
     background-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-3px);
+}
+
+/* Menú móvil */
+.menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    width: 30px;
+    height: 21px;
+    position: relative;
+}
+
+.menu-icon span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: white;
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+}
+
+.menu-icon span:nth-child(1) {
+    top: 0px;
+}
+
+.menu-icon span:nth-child(2) {
+    top: 9px;
+}
+
+.menu-icon span:nth-child(3) {
+    top: 18px;
 }
 
 /* Contenido principal */
@@ -82,6 +128,16 @@ main {
     padding: 0 2rem;
 }
 
+/* Alertas y mensajes */
+.alert {
+    background-color: var(--color-warning);
+    color: white;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
 /* Botones */
 .btn {
     display: inline-block;
@@ -89,9 +145,10 @@ main {
     border-radius: 30px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--transition);
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
 }
 
 .btn.primary {
@@ -101,6 +158,16 @@ main {
 
 .btn.secondary {
     background-color: var(--color-secondary);
+    color: white;
+}
+
+.btn.success {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.btn.danger {
+    background-color: var(--color-error);
     color: white;
 }
 
@@ -120,10 +187,93 @@ main {
     border-radius: 20px;
 }
 
+.btn.add {
+    background-color: var(--color-success);
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+}
+
 .btn:hover {
     opacity: 0.9;
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.2);
+}
+
+.form-error {
+    color: var(--color-error);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+/* Contenedores de autenticación */
+.auth-container, .form-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: var(--color-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.auth-container h2, .form-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-primary);
+    font-size: 2rem;
+}
+
+.subtitle {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-light);
+}
+
+.auth-links {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.auth-links a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
 /* Página de inicio */
@@ -168,9 +318,9 @@ main {
     padding: 2rem;
     margin: 0 0.5rem;
     background-color: var(--color-card);
-    border-radius: 15px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
-    transition: transform 0.3s;
+    transition: var(--transition);
 }
 
 .feature:hover {
@@ -189,7 +339,7 @@ main {
     margin: 2rem auto;
     padding: 2.5rem;
     background-color: var(--color-card);
-    border-radius: 15px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
 }
 
@@ -206,7 +356,7 @@ main {
 }
 
 .file-input {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .file-input label {
@@ -222,7 +372,7 @@ main {
     border: 2px dashed var(--color-secondary);
     border-radius: 10px;
     background-color: rgba(52, 152, 219, 0.05);
-    transition: all 0.3s;
+    transition: var(--transition);
 }
 
 .file-input input[type="file"]:hover {
@@ -236,26 +386,86 @@ main {
     color: var(--color-text-light);
 }
 
+.selected-file-info {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.selected-file-info.has-file {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* Sistema de pestañas */
+.tabs-container {
+    background-color: var(--color-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+}
+
+.tab-btn {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--color-text-light);
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    color: var(--color-primary);
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-primary);
+}
+
+.tab-content {
+    display: none;
+    padding: 1rem;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* Página de playlist */
 .playlist-container {
-    background-color: var(--color-card);
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    padding: 2.5rem;
+    padding: 2rem;
+}
+
+.playlist-header, .playlists-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
-.playlist-container h2 {
-    text-align: center;
-    margin-bottom: 2.5rem;
+.playlist-header h2, .playlists-header h2 {
     color: var(--color-primary);
-    font-size: 2rem;
+    font-size: 1.8rem;
 }
 
 .player {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    padding: 2rem;
-    border-radius: 15px;
+    padding: 1.5rem;
+    border-radius: var(--radius);
     margin-bottom: 2.5rem;
     text-align: center;
     color: white;
@@ -265,7 +475,7 @@ main {
 .player h3 {
     margin-bottom: 1.5rem;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -299,7 +509,7 @@ main {
     align-items: center;
     padding: 1.2rem;
     border-bottom: 1px solid #eee;
-    transition: all 0.3s;
+    transition: var(--transition);
     border-radius: 10px;
 }
 
@@ -328,15 +538,45 @@ main {
 
 .song-actions {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
-.song-actions .btn {
-    margin-left: 0.8rem;
+/* Playlists grid */
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.playlist-card {
+    background-color: #f8f9fa;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.playlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.playlist-card-inner {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.playlist-card h3 {
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+    font-size: 1.3rem;
 }
 
 .empty-list {
     text-align: center;
-    padding: 4rem 0;
+    padding: 3rem 0;
 }
 
 .empty-list p {
@@ -351,24 +591,49 @@ footer {
     padding: 2rem 0;
     color: var(--color-text-light);
     font-size: 0.9rem;
+    margin-top: 3rem;
 }
 
 /* Estilos responsivos */
 @media (max-width: 768px) {
-    nav {
+    /* Navegación responsive */
+    .menu-icon {
+        display: block;
+    }
+    
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
         flex-direction: column;
-        padding: 1rem;
+        background-color: var(--color-primary);
+        box-shadow: var(--shadow);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
     }
     
-    nav ul {
-        margin-top: 1rem;
+    .menu-toggle:checked ~ .nav-links {
+        max-height: 300px;
     }
     
-    nav ul li {
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
+    .nav-links li {
+        margin: 0;
     }
     
+    .nav-links li a {
+        display: block;
+        padding: 1rem 2rem;
+        border-radius: 0;
+    }
+    
+    /* Contenido principal */
+    main {
+        padding: 0 1rem;
+    }
+    
+    /* Features en columna */
     .features {
         flex-direction: column;
     }
@@ -377,21 +642,50 @@ footer {
         margin: 1rem 0;
     }
     
+    /* Song item en columna */
     .song-item {
         flex-direction: column;
         align-items: flex-start;
     }
     
+    .song-name {
+        margin-bottom: 1rem;
+        padding-right: 0;
+    }
+    
     .song-actions {
-        margin-top: 1rem;
         width: 100%;
         justify-content: space-between;
     }
     
-    .song-actions .btn {
-        margin-left: 0;
-        flex: 1;
-        margin-right: 0.5rem;
-        text-align: center;
+    /* Playlists en columna para pantallas muy pequeñas */
+    .playlists-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ajustes para pantallas grandes */
+@media (min-width: 1200px) {
+    .player {
+        padding: 2.5rem;
+    }
+    
+    .song-item {
+        padding: 1.5rem;
+    }
+    
+    .feature {
+        padding: 2.5rem;
+    }
+    
+    .playlists-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Ajustes para pantallas extra grandes */
+@media (min-width: 1600px) {
+    main {
+        max-width: 1400px;
     }
 }
