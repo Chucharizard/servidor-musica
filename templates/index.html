@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="welcome">
+    <h2 class="mb-sm">¡Tu Música, Siempre Contigo!</h2>
+    <p class="mb-md">Guarda, reproduce y descarga tus canciones favoritas desde cualquier dispositivo en tu red.</p>
+    
+    <div class="actions d-flex justify-center flex-wrap gap">
+        <a href="{{ url_for('upload') }}" class="btn primary">Subir nueva canción</a>
+        <a href="{{ url_for('playlist') }}" class="btn secondary">Mi biblioteca</a>
+    </div>
+    
+    <div class="features">
+        <div class="feature">
+            <h3 class="mb-sm">Sube tus canciones</h3>
+            <p>Importa fácilmente archivos MP3, WAV, OGG o M4A desde cualquier dispositivo.</p>
+        </div>
+        <div class="feature">
+            <h3 class="mb-sm">Escucha donde quieras</h3>
+            <p>Accede a tu colección desde cualquier dispositivo conectado a tu red local.</p>
+        </div>
+        <div class="feature">
+            <h3 class="mb-sm">Descarga cuando necesites</h3>
+            <p>Lleva tu música contigo descargándola a cualquier dispositivo para escucharla sin conexión.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

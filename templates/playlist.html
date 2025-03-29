@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Biblioteca - Servidor de Música{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="tabs-container">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="all-songs">Todas las Canciones</button>
+        {% if current_user.is_authenticated and playlists %}
+            <button class="tab-btn" data-tab="playlists">Mis Playlists</button>
+        {% endif %}
+    </div>
+    
+    <div class="tab-content active" id="all-songs">
+        <div class="playlist-container">
+            <div class="playlist-header">
+                <h2>Mi Biblioteca</h2>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('upload') }}" class="btn primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-upload">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        Subir canción
+                    </a>
+                {% endif %}
+            </div>
+            
+            {% if current_file %}
+            <div class="player mb">
+                <h3 class="text-truncate">{{ current_file }}</h3>
+                <audio controls autoplay id="audio-player">
+                    <source src="{{ url_for('static', filename='uploads/' + current_file) }}" type="audio/mpeg">
+                    Tu navegador no soporta el elemento de audio.
+                </audio>
+            </div>
+            {% endif %}
+            
+            {% if files %}
+                <ul class="song-list">
+                    {% for file in files %}
+                    <li class="song-item {% if current_file == file %}active{% endif %}">
+                        <div class="song-number">{{ loop.index }}</div>
+                        <span class="song-name text-truncate">{{ file }}</span>
+                        <div class="song-actions">
+                            <a href="{{ url_for('play_file', filename=file) }}" class="btn play">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            </a>
+                            <a href="{{ url_for('download_file', filename=file) }}" class="btn download">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </a>
+                            {% if current_user.is_authenticated %}
+                                <a href="{{ url_for('add_to_playlist', filename=file) }}" class="btn add">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-list">
+                    <div class="empty-playlist-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                    </div>
+                    <p>No hay canciones disponibles.</p>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('upload') }}" class="btn primary">Subir canciones</a>
+                    {% else %}
+                        <p class="mt-sm mb-sm">Inicia sesión para poder subir tus propias canciones.</p>
+                        <a href="{{ url_for('login') }}" class="btn primary">Iniciar Sesión</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if current_user.is_authenticated and playlists %}
+        <div class="tab-content" id="playlists">
+            <div class="playlists-container">
+                <div class="playlists-header mb">
+                    <h2>Mis Playlists</h2>
+                    <a href="{{ url_for('create_playlist') }}" class="btn primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Nueva Playlist
+                    </a>
+                </div>
+                
+                <ul class="playlists-grid">
+                    {% for playlist in playlists %}
+                    <li class="playlist-card">
+                        <div class="playlist-card-inner">
+                            <div class="playlist-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 18V5l12-2v13"></path>
+                                    <circle cx="6" cy="18" r="3"></circle>
+                                    <circle cx="18" cy="16" r="3"></circle>
+                                </svg>
+                            </div>
+                            <h3 class="text-truncate mb-sm">{{ playlist.title }}</h3>
+                            <div class="playlist-info">
+                                <a href="{{ url_for('view_playlist', playlist_id=playlist.id) }}" class="btn secondary w-100">Ver Playlist</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to current button and content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Reproductor: reproducir siguiente canción cuando termine la actual
+        const audioPlayer = document.getElementById('audio-player');
+        if (audioPlayer) {
+            audioPlayer.addEventListener('ended', function() {
+                const currentSong = document.querySelector('.song-item.active');
+                if (currentSong) {
+                    const nextSong = currentSong.nextElementSibling;
+                    if (nextSong) {
+                        const playLink = nextSong.querySelector('.btn.play');
+                        if (playLink) {
+                            window.location.href = playLink.href;
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

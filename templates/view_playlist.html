@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}{{ playlist.title }} - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="playlist-container">
+    <div class="playlist-header">
+        <div class="playlist-header-info">
+            <div class="playlist-avatar">
+                <div class="playlist-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                    </svg>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-truncate">{{ playlist.title }}</h2>
+                <p class="playlist-meta">
+                    <span>{{ files|length }} canciones</span>
+                    <span class="playlist-owner">{{ current_user.username }}</span>
+                </p>
+            </div>
+        </div>
+        <div class="playlist-actions">
+            <a href="{{ url_for('playlist') }}" class="btn secondary">Volver</a>
+            {% if files %}
+            <button class="btn primary play-all" onclick="playAll()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Reproducir Todo
+            </button>
+            {% endif %}
+            <button class="btn accent" onclick="toggleShareModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Compartir
+            </button>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert mb">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% if files %}
+        {% if current_file %}
+        <div class="player mb">
+            <h3 class="text-truncate">{{ current_file }}</h3>
+            <audio controls autoplay id="audio-player">
+                <source src="{{ url_for('static', filename='uploads/' + current_file) }}" type="audio/mpeg">
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+        </div>
+        {% endif %}
+        
+        <ul class="song-list" id="song-list">
+            {% for file in files %}
+            <li class="song-item {% if current_file == file %}active{% endif %}" data-filename="{{ file }}">
+                <div class="song-number">{{ loop.index }}</div>
+                <span class="song-name text-truncate">{{ file }}</span>
+                <div class="song-actions">
+                    <a href="{{ url_for('play_file', filename=file, playlist_id=playlist.id) }}" class="btn play">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </a>
+                    <a href="{{ url_for('download_file', filename=file) }}" class="btn download">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-list">
+            <div class="empty-playlist-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18V5l12-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+            </div>
+            <p class="mb">Esta playlist está vacía. ¡Añade algunas canciones!</p>
+            <div class="d-flex justify-center">
+                <a href="{{ url_for('upload') }}" class="btn primary">Subir canciones</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal para compartir playlist -->
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Compartir Playlist</h3>
+            <span class="close" onclick="toggleShareModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Comparte tu playlist "{{ playlist.title }}" con otros usuarios.</p>
+            
+            <form method="post" action="{{ url_for('share_playlist', playlist_id=playlist.id) }}">
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_public" id="is_public"> 
+                        <span>Hacer pública esta playlist</span>
+                    </label>
+                    <p class="form-help">Al hacer pública tu playlist, cualquier usuario podrá verla, reproducirla y descargarla.</p>
+                </div>
+                
+                <button type="submit" class="btn primary w-100 mt">Guardar configuración</button>
+            </form>
+            
+            <div class="share-info mt">
+                <p>Puedes encontrar todas las playlists públicas en la sección "Comunidad".</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Función para mostrar/ocultar el modal de compartir
+    function toggleShareModal() {
+        const modal = document.getElementById('shareModal');
+        if (modal.style.display === 'flex') {
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        } else {
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+    }
+    
+    // Cerrar modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        const modal = document.getElementById('shareModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+    }
+    
+    // Función para reproducir todas las canciones en secuencia
+    function playAll() {
+        // Obtener la primera canción y comenzar a reproducirla
+        const firstSong = document.querySelector('.song-item');
+        if (firstSong) {
+            const playLink = firstSong.querySelector('.btn.play');
+            if (playLink) {
+                // Extraer la URL y navegar a ella sin salir de la página actual
+                const href = playLink.getAttribute('href');
+                window.location.href = href;
+            }
+        }
+    }
+    
+    // Reproducción en secuencia
+    document.addEventListener('DOMContentLoaded', function() {
+        const audioPlayer = document.getElementById('audio-player');
+        if (audioPlayer) {
+            audioPlayer.addEventListener('ended', function() {
+                const currentSong = document.querySelector('.song-item.active');
+                if (currentSong) {
+                    const nextSong = currentSong.nextElementSibling;
+                    if (nextSong) {
+                        const playLink = nextSong.querySelector('.btn.play');
+                        if (playLink) {
+                            window.location.href = playLink.href;
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Agregar clase de hover a los elementos de la lista
+        const songItems = document.querySelectorAll('.song-item');
+        songItems.forEach(item => {
+            item.addEventListener('mouseover', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.add('hover');
+                }
+            });
+            
+            item.addEventListener('mouseout', function() {
+                this.classList.remove('hover');
+            });
+        });
+    });
+</script>
+{% endblock %}

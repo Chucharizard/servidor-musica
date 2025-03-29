@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Subir Música - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <h2 class="mb">Subir Canciones</h2>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert mb">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+        <div class="file-input mb">
+            <label for="file">Seleccionar archivos de música</label>
+            <input type="file" id="file" name="files[]" accept=".mp3,.wav,.ogg,.m4a" multiple required>
+            <p class="file-info mt-xs">Formatos: MP3, WAV, OGG, M4A</p>
+            <p class="file-info">Tamaño máximo: 200MB por archivo</p>
+            <div class="selected-file-info mt-sm">Ningún archivo seleccionado</div>
+        </div>
+        
+        <div class="form-group mb">
+            <label for="playlist_option">Añadir a playlist:</label>
+            <select name="playlist_option" id="playlist_option" class="form-control" onchange="togglePlaylistOptions()">
+                <option value="none">-- No añadir a ninguna playlist --</option>
+                <option value="existing">Añadir a una playlist existente</option>
+                <option value="new">Crear una nueva playlist</option>
+            </select>
+        </div>
+        
+        <!-- Sección para playlist existente (oculta por defecto) -->
+        <div id="existing_playlist_section" class="form-group mb" style="display: none;">
+            {% if playlists %}
+                <label for="playlist_id">Seleccionar playlist:</label>
+                <select name="playlist_id" id="playlist_id" class="form-control">
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.title }}</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <p class="text-muted">No tienes playlists aún. Crea una nueva.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Sección para nueva playlist (oculta por defecto) -->
+        <div id="new_playlist_section" class="form-group mb" style="display: none;">
+            <label for="new_playlist_title">Nombre de la nueva playlist:</label>
+            <input type="text" name="new_playlist_title" id="new_playlist_title" class="form-control" placeholder="Mi nueva playlist">
+        </div>
+        
+        <!-- Barra de progreso (oculta por defecto) -->
+        <div class="upload-progress-container mb" style="display: none;">
+            <div class="upload-progress-label">Subiendo: <span id="uploadPercent">0%</span></div>
+            <div class="upload-progress-bar">
+                <div class="upload-progress-fill" id="uploadProgressFill"></div>
+            </div>
+            <div class="upload-progress-status mt-xs">
+                <span id="uploadSpeed">0 KB/s</span> • 
+                <span id="uploadedSize">0 KB</span> / <span id="totalSize">0 MB</span> • 
+                <span id="timeRemaining">Calculando...</span>
+            </div>
+            <div id="fileProgressList" class="file-progress-list mt-sm"></div>
+        </div>
+        
+        <button type="submit" class="btn primary w-100" id="uploadButton">Subir Archivos</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePlaylistOptions() {
+        const selectedOption = document.getElementById('playlist_option').value;
+        const existingSection = document.getElementById('existing_playlist_section');
+        const newSection = document.getElementById('new_playlist_section');
+        
+        // Ocultar ambas secciones primero
+        existingSection.style.display = 'none';
+        newSection.style.display = 'none';
+        
+        // Mostrar la sección correspondiente según la selección
+        if (selectedOption === 'existing') {
+            existingSection.style.display = 'block';
+        } else if (selectedOption === 'new') {
+            newSection.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('file');
+        const fileInfoDiv = document.querySelector('.selected-file-info');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadButton = document.getElementById('uploadButton');
+        const progressContainer = document.querySelector('.upload-progress-container');
+        const progressFill = document.getElementById('uploadProgressFill');
+        const uploadPercent = document.getElementById('uploadPercent');
+        const uploadSpeed = document.getElementById('uploadSpeed');
+        const uploadedSize = document.getElementById('uploadedSize');
+        const totalSize = document.getElementById('totalSize');
+        const timeRemaining = document.getElementById('timeRemaining');
+        const fileProgressList = document.getElementById('fileProgressList');
+        
+        // Inicializar opciones de playlist
+        togglePlaylistOptions();
+        
+        // Mostrar información de los archivos seleccionados
+        fileInput.addEventListener('change', function() {
+            const files = this.files;
+            
+            if (fileInfoDiv) {
+                if (files.length > 0) {
+                    fileInfoDiv.classList.add('has-file');
+                    
+                    // Calcular tamaño total
+                    let totalBytes = 0;
+                    for (let i = 0; i < files.length; i++) {
+                        totalBytes += files[i].size;
+                    }
+                    
+                    const totalSizeFormatted = formatFileSize(totalBytes);
+                    fileInfoDiv.innerHTML = `<strong>${files.length} archivo${files.length > 1 ? 's' : ''} seleccionado${files.length > 1 ? 's' : ''}</strong> (${totalSizeFormatted})`;
+                    
+                    // Mostrar lista de archivos si hay más de uno
+                    if (files.length > 1) {
+                        let fileListHtml = '<ul class="selected-files-list">';
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            fileListHtml += `<li>${file.name} (${formatFileSize(file.size)})</li>`;
+                        }
+                        fileListHtml += '</ul>';
+                        fileInfoDiv.innerHTML += fileListHtml;
+                    } else if (files.length === 1) {
+                        // Mostrar el nombre del único archivo
+                        fileInfoDiv.innerHTML = `Archivo: ${files[0].name} (${formatFileSize(files[0].size)})`;
+                    }
+                    
+                    // Actualizar el tamaño total en la barra de progreso
+                    totalSize.textContent = totalSizeFormatted;
+                } else {
+                    fileInfoDiv.classList.remove('has-file');
+                    fileInfoDiv.textContent = 'Ningún archivo seleccionado';
+                }
+            }
+        });
+        
+        // Manejar el envío del formulario
+        uploadForm.addEventListener('submit', function(e) {
+            const files = fileInput.files;
+            if (!files || files.length === 0) return; // No hacer nada si no hay archivos seleccionados
+            
+            // Validar creación de playlist
+            const playlistOption = document.getElementById('playlist_option').value;
+            if (playlistOption === 'new') {
+                const newPlaylistTitle = document.getElementById('new_playlist_title').value.trim();
+                if (!newPlaylistTitle) {
+                    alert('Por favor ingresa un nombre para la nueva playlist.');
+                    document.getElementById('new_playlist_title').focus();
+                    return;
+                }
+            }
+            
+            e.preventDefault(); // Prevenir envío normal del formulario
+            
+            // Preparar para mostrar el progreso
+            progressContainer.style.display = 'block';
+            uploadButton.disabled = true;
+            uploadButton.classList.add('is-loading');
+            uploadButton.textContent = 'Subiendo...';
+            
+            // Preparar lista de progreso individual por archivo
+            fileProgressList.innerHTML = '';
+            if (files.length > 1) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-progress-item';
+                    fileItem.innerHTML = `
+                        <div class="file-progress-name">${file.name}</div>
+                        <div class="file-progress-bar">
+                            <div class="file-progress-fill" id="file-progress-${i}" style="width: 0%"></div>
+                        </div>
+                        <div class="file-progress-percent">0%</div>
+                    `;
+                    fileProgressList.appendChild(fileItem);
+                }
+            }
+            
+            // Crear FormData para el envío
+            const formData = new FormData(uploadForm);
+            
+            // Crear y configurar la solicitud XHR
+            const xhr = new XMLHttpRequest();
+            let startTime = Date.now();
+            let lastLoaded = 0;
+            let currentSpeed = 0;
+            
+            // Configurar el evento de progreso
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    // Calcular porcentaje de progreso
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressFill.style.width = percent + '%';
+                    uploadPercent.textContent = percent + '%';
+                    
+                    // Calcular velocidad de subida
+                    const currentTime = Date.now();
+                    const elapsedTime = (currentTime - startTime) / 1000; // en segundos
+                    if (elapsedTime > 0.5) { // Actualizar cada medio segundo
+                        const loadDifference = e.loaded - lastLoaded;
+                        currentSpeed = loadDifference / elapsedTime; // bytes por segundo
+                        lastLoaded = e.loaded;
+                        startTime = currentTime;
+                        
+                        uploadSpeed.textContent = formatFileSize(currentSpeed) + '/s';
+                    }
+                    
+                    // Mostrar tamaño subido
+                    uploadedSize.textContent = formatFileSize(e.loaded);
+                    
+                    // Calcular tiempo restante
+                    if (currentSpeed > 0) {
+                        const remainingBytes = e.total - e.loaded;
+                        const remainingTime = remainingBytes / currentSpeed; // en segundos
+                        timeRemaining.textContent = formatTime(remainingTime);
+                    }
+                }
+            });
+            
+            // Configurar el evento de finalización
+            xhr.addEventListener('load', function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    // Éxito - redirigir a donde responda el servidor
+                    window.location.href = xhr.responseURL || '/playlist';
+                } else {
+                    // Error
+                    progressContainer.style.display = 'none';
+                    uploadButton.disabled = false;
+                    uploadButton.classList.remove('is-loading');
+                    uploadButton.textContent = 'Subir Archivos';
+                    
+                    // Mostrar mensaje de error
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert error';
+                    errorDiv.textContent = 'Error al subir los archivos. Por favor, inténtalo de nuevo.';
+                    uploadForm.insertBefore(errorDiv, uploadForm.firstChild);
+                    
+                    // Eliminar mensaje de error después de 5 segundos
+                    setTimeout(() => {
+                        errorDiv.style.opacity = '0';
+                        setTimeout(() => errorDiv.remove(), 300);
+                    }, 5000);
+                }
+            });
+            
+            // Enviar el formulario
+            xhr.open('POST', uploadForm.action);
+            xhr.send(formData);
+        });
+        
+        // Función para formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Función para formatear tiempo
+        function formatTime(seconds) {
+            if (seconds === Infinity || isNaN(seconds)) {
+                return 'Calculando...';
+            }
+            
+            if (seconds < 60) {
+                return Math.round(seconds) + ' segundos';
+            } else if (seconds < 3600) {
+                return Math.round(seconds / 60) + ' minutos';
+            } else {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.round((seconds % 3600) / 60);
+                return hours + 'h ' + minutes + 'm';
+            }
+        }
+    });
+</script>
+{% endblock %}

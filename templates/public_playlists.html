@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Playlists Públicas - Servidor de Música{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="community-header">
+        <h2>Playlists de la Comunidad</h2>
+        <p class="subtitle">Descubre nueva música explorando las playlists compartidas por otros usuarios</p>
+    </div>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert mb">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% if playlists %}
+        <div class="public-playlists-grid">
+            {% for playlist in playlists %}
+                <div class="public-playlist-card">
+                    <div class="public-playlist-header">
+                        <div class="playlist-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18V5l12-2v13"></path>
+                                <circle cx="6" cy="18" r="3"></circle>
+                                <circle cx="18" cy="16" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="public-playlist-info">
+                            <h3 class="text-truncate">{{ playlist.title }}</h3>
+                            <div class="public-playlist-meta">
+                                <div class="creator">
+                                    <div class="user-avatar user-avatar-sm">{{ playlist.username[0]|upper }}</div>
+                                    <span>{{ playlist.username }}</span>
+                                </div>
+                                <span class="song-count">{{ playlist.song_count }} canciones</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="public-playlist-actions">
+                        <a href="{{ url_for('public_playlist', playlist_id=playlist.id) }}" class="btn primary">Ver Playlist</a>
+                        <a href="{{ url_for('download_playlist', playlist_id=playlist.id) }}" class="btn secondary">Descargar</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-list">
+            <div class="empty-playlist-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18V5l12-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+            </div>
+            <p class="mb">No hay playlists públicas aún. ¡Sé el primero en compartir tu música!</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('playlist') }}" class="btn primary">Ver mis playlists</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn primary">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
